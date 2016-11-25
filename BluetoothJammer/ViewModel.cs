@@ -29,21 +29,15 @@ namespace BluetoothJammer
                 if (devices.SequenceEqual(oldDevices))
                     continue;
                 oldDevices = new List<Device>(devices);
-                await App.Current.Dispatcher.BeginInvoke((Action)async delegate ()
+                await App.Current.Dispatcher.BeginInvoke((Action)delegate ()
                 {
                     Devices.Clear();
                     foreach (var item in oldDevices)
                     {
                         Devices.Add(item);
-                        var success = await Service.Send(item, "Hi, sorry for inconvenience. We are trying to hack bluetooth");
+                        //var success = await Service.Send(item, "Hi, sorry for inconvenience. We are trying to hack bluetooth");
                     }
                 });
-
-                var dev = Devices.FirstOrDefault(x => x.DeviceName == "Redmi Note 3");
-
-                if (dev == null)
-                    continue;
-                var a = await Service.Send(dev, "Hello");
             }
         }
     }
