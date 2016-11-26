@@ -93,7 +93,7 @@ namespace Bluetooth.Services
                         }
                         return false;
                     }
-                    catch
+                    catch(Exception ex)
                     {
                         // the error will be ignored and the send data will report as not sent
                         // for understood the type of the error, handle the exception

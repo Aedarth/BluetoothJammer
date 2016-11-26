@@ -8,6 +8,7 @@ using Bluetooth.Model;
 using GalaSoft.MvvmLight;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using InTheHand.Net.Bluetooth;
 
 namespace BluetoothJammer
 {

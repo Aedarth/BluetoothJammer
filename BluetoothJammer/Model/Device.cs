@@ -80,6 +80,7 @@ namespace Bluetooth.Model
         /// </value>
         public BluetoothDeviceInfo DeviceInfo { get; set; }
 
+        public string Address { get; set; }
         /// <summary>
         /// Initializes a new instance of the <see cref="Device"/> class.
         /// </summary>
@@ -91,6 +92,7 @@ namespace Bluetooth.Model
             if (device_info != null)
             {
                 DeviceInfo = device_info;
+                Address = device_info.DeviceAddress.ToString();
                 IsAuthenticated = device_info.Authenticated;
                 IsConnected = device_info.Connected;
                 DeviceName = device_info.DeviceName;
