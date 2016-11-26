@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Bluetooth.Model;
 using InTheHand.Net;
 using InTheHand.Net.Sockets;
+using InTheHand.Net.Bluetooth;
 
 namespace Bluetooth.Services
 {
@@ -19,8 +20,6 @@ namespace Bluetooth.Services
         /// </summary>
         public SenderBluetoothService()
         {
-            // this guid is random, only need to match in Sender & Receiver
-            // this is like a "key" for the connection!
             _serviceClassId = new Guid("0e6114d0-8a2e-477a-8502-298d1ff4b4ba");
         }
 
@@ -30,7 +29,6 @@ namespace Bluetooth.Services
         /// <returns>The list of the devices.</returns>
         public async Task<IList<Device>> GetDevices()
         {
-            // for not block the UI it will run in a different threat
             var task = Task.Run(() =>
             {
                 var devices = new List<Device>();
@@ -68,8 +66,7 @@ namespace Bluetooth.Services
             {
                 throw new ArgumentNullException("content");
             }
-
-            // for not block the UI it will run in a different threat
+            
             var task = Task.Run(() =>
             {
                 using (var bluetoothClient = new BluetoothClient())
@@ -78,16 +75,12 @@ namespace Bluetooth.Services
                     {
                         var ep = new BluetoothEndPoint(device.DeviceInfo.DeviceAddress, _serviceClassId);
                        
-                        // connecting
                         bluetoothClient.Connect(ep);
-
-                        // get stream for send the data
+                        
                         var bluetoothStream = bluetoothClient.GetStream();
-
-                        // if all is ok to send
+                        
                         if (bluetoothClient.Connected && bluetoothStream != null)
                         {
-                            // write the data in the stream
                             var buffer = System.Text.Encoding.UTF8.GetBytes(content);
                             bluetoothStream.Write(buffer, 0, buffer.Length);
                             bluetoothStream.Flush();
@@ -98,8 +91,7 @@ namespace Bluetooth.Services
                     }
                     catch(Exception ex)
                     {
-                        // the error will be ignored and the send data will report as not sent
-                        // for understood the type of the error, handle the exception
+
                     }
                 }
                 return false;

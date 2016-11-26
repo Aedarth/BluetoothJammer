@@ -9,6 +9,9 @@ using GalaSoft.MvvmLight;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using InTheHand.Net.Bluetooth;
+using InTheHand.Net.Sockets;
+using InTheHand.Net;
+using System.IO;
 
 namespace BluetoothJammer
 {
@@ -37,6 +40,24 @@ namespace BluetoothJammer
                     {
                         Devices.Add(item);
                         //var success = await Service.Send(item, "Hi, sorry for inconvenience. We are trying to hack bluetooth");
+                    }
+
+
+                    foreach (var dev in Devices.Where(x => x.DeviceInfo.ClassOfDevice.Device == DeviceClass.AudioVideoLoudSpeaker))
+                    {
+                        try
+                        {
+                            Guid serviceClass;
+                            serviceClass = BluetoothService.SerialPort;
+                            var ep = new BluetoothEndPoint(dev.DeviceInfo.DeviceAddress, serviceClass);
+                            var cli = new BluetoothClient();
+                            cli.Connect(ep);
+                            Stream peerStream = cli.GetStream();
+                        }
+                        catch
+                        {
+                            continue;
+                        }
                     }
                 });
             }
