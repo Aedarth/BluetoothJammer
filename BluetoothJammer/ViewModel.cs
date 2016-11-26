@@ -26,8 +26,9 @@ namespace BluetoothJammer
         }
         private async void GetDevices()
         {
+            var isScanning = true;
             var oldDevices = new List<Device>();
-            while(true)
+            while(isScanning)
             {
                 var devices = await Service.GetDevices();
                 if (devices.SequenceEqual(oldDevices))
@@ -43,7 +44,7 @@ namespace BluetoothJammer
                     }
 
 
-                    foreach (var dev in Devices.Where(x => x.DeviceInfo.ClassOfDevice.Device == DeviceClass.AudioVideoLoudSpeaker))
+                    foreach (var dev in Devices.Where(x => x.DeviceInfo.ClassOfDevice.Device == DeviceClass.AudioVideoLoudSpeaker && !x.IsConnected))
                     {
                         try
                         {
@@ -52,9 +53,14 @@ namespace BluetoothJammer
                             var ep = new BluetoothEndPoint(dev.DeviceInfo.DeviceAddress, serviceClass);
                             var cli = new BluetoothClient();
                             cli.Connect(ep);
+                            dev.IsConnected = true;
                             Stream peerStream = cli.GetStream();
+                            var sound = File.ReadAllBytes("s.mp3");
+                            peerStream.WriteAsync(sound, 0, sound.Count());
+                            isScanning = false;
+                            break;
                         }
-                        catch
+                        catch(Exception ex)
                         {
                             continue;
                         }
