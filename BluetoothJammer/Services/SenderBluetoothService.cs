@@ -34,9 +34,12 @@ namespace Bluetooth.Services
             var task = Task.Run(() =>
             {
                 var devices = new List<Device>();
-                using (var bluetoothClient = new BluetoothClient())
+                using (var bluetoothClient = new BluetoothClient()
                 {
-                    var array = bluetoothClient.DiscoverDevices();
+                    Authenticate = false,
+                })
+                {
+                    var array = bluetoothClient.DiscoverDevicesInRange();
                     var count = array.Length;
                     for (var i = 0; i < count; i++)
                     {

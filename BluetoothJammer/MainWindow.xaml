@@ -5,12 +5,44 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BluetoothJammer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="680">
     <Window.Resources>
         <local:ViewModel x:Key="VM"/>
+        <SolidColorBrush x:Key="GotFocusColor" Color="Green" />
+        <SolidColorBrush x:Key="LostFocusColor" Color="Transparent" />
+
+        <Style TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="Background" Value="Black"/>
+            <Setter Property="Foreground" Value="Green"/>
+            <Setter Property="FontWeight" Value="ExtraBlack"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style TargetType="{x:Type DataGridRow}">
+            <Setter Property="Foreground" Value="Green"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="FontWeight" Value="ExtraBlack"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Background" Value="Black"/>
+        </Style>
     </Window.Resources>
-    <Grid DataContext="{StaticResource VM}">
-        <DataGrid x:Name="Devices" ItemsSource="{Binding Devices}">
+    <Grid DataContext="{StaticResource VM}" Background="Black">
+        <DataGrid x:Name="Devices" Margin="0,10"
+                  IsReadOnly="True" RowHeaderWidth="0"
+                  ItemsSource="{Binding Devices}" 
+                  ColumnWidth="*" Background="Black"
+                  AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding DeviceName}"/>
+                <DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
+                <DataGridTextColumn Header="Address" Binding="{Binding Address}"/>
+                <DataGridCheckBoxColumn Header="Connected" Binding="{Binding IsConnected}"/>
+                <DataGridCheckBoxColumn Header="Authenticated" Binding="{Binding IsAuthenticated}"/>
+                <DataGridCheckBoxColumn Header="Remembered" Binding="{Binding IsRemembered}"/>
+                <DataGridTextColumn Header="Last seen" Binding="{Binding LastSeen}"/>
+            </DataGrid.Columns>
         </DataGrid>
     </Grid>
 </Window>
