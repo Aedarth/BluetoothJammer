@@ -12,6 +12,8 @@ using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
 using InTheHand.Net;
 using System.IO;
+using System.Media;
+using System.Windows.Media;
 
 namespace BluetoothJammer
 {
@@ -55,8 +57,9 @@ namespace BluetoothJammer
                             cli.Connect(ep);
                             dev.IsConnected = true;
                             Stream peerStream = cli.GetStream();
-                            var sound = File.ReadAllBytes("s.mp3");
-                            peerStream.WriteAsync(sound, 0, sound.Count());
+                            var player = new MediaPlayer();
+                            player.Open(new Uri(AppDomain.CurrentDomain.BaseDirectory + "s.mp3"));
+                            player.Play();
                             isScanning = false;
                             break;
                         }
