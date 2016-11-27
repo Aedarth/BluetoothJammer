@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows;
 using Bluetooth.Model;
 using InTheHand.Net;
 using InTheHand.Net.Sockets;
@@ -13,7 +14,7 @@ namespace Bluetooth.Services
     /// </summary>
     public sealed class SenderBluetoothService : ISenderBluetoothService
     {
-         private readonly Guid _serviceClassId;
+        private readonly Guid _serviceClassId;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SenderBluetoothService"/> class. 
@@ -31,20 +32,32 @@ namespace Bluetooth.Services
         {
             var task = Task.Run(() =>
             {
-                var devices = new List<Device>();
-                using (var bluetoothClient = new BluetoothClient()
+                try
                 {
-                    Authenticate = false,
-                })
-                {
-                    var array = bluetoothClient.DiscoverDevices();
-                    var count = array.Length;
-                    for (var i = 0; i < count; i++)
+                    var devices = new List<Device>();
+                    using (var bluetoothClient = new BluetoothClient()
                     {
-                        devices.Add(new Device(array[i]));
+                        Authenticate = false,
+                    })
+                    {
+                        var array = bluetoothClient.DiscoverDevices();
+                        var count = array.Length;
+                        for (var i = 0; i < count; i++)
+                        {
+                            devices.Add(new Device(array[i]));
+                        }
                     }
+                    return devices;
+
                 }
-                return devices;
+                catch (Exception)
+                {
+                    MessageBox.Show("Please enable bluetooth on your device and restart the app.");
+                    Application.Current.Dispatcher.Invoke((Action) delegate {
+                        Application.Current.MainWindow.Close();
+                    });
+                    throw;
+                }
             });
             return await task;
         }
