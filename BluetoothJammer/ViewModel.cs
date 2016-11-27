@@ -14,6 +14,7 @@ using InTheHand.Net;
 using System.IO;
 using System.Media;
 using System.Windows.Media;
+using System.Windows;
 
 namespace BluetoothJammer
 {
@@ -30,10 +31,13 @@ namespace BluetoothJammer
                 Set(ref _status, value);
             }
         }
+
         public ViewModel()
         {
+            Task.Run(() => PlaySilence());
             GetDevices();
         }
+
         private async void GetDevices()
         {
             var isScanning = true;
@@ -66,13 +70,14 @@ namespace BluetoothJammer
                             Status = $"Attempting to connect to {dev.DeviceName}...";
                             Guid serviceClass;
                             serviceClass = BluetoothService.SerialPort;
-                            var ep = new BluetoothEndPoint(dev.DeviceInfo.DeviceAddress, serviceClass);
-                            var cli = new BluetoothClient();
-                            cli.Connect(ep);
-                            dev.IsConnected = true;
-                            isScanning = false;
-                            Status = $"Connected to {dev.DeviceName}. Attempting to play silence.";
-                            PlaySilence();
+                            using (var cli = new BluetoothClient())
+                            {
+                                var ep = new BluetoothEndPoint(dev.DeviceInfo.DeviceAddress, serviceClass);
+                                cli.Connect(ep);
+                                dev.IsConnected = true;
+                                isScanning = false;
+                                Status = $"Connected to {dev.DeviceName}. Attempting disruption of spacetime continuum.";
+                            }
                             break;
                         }
                         catch(Exception ex)

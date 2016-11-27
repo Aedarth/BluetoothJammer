@@ -37,7 +37,7 @@ namespace Bluetooth.Services
                     Authenticate = false,
                 })
                 {
-                    var array = bluetoothClient.DiscoverDevicesInRange();
+                    var array = bluetoothClient.DiscoverDevices();
                     var count = array.Length;
                     for (var i = 0; i < count; i++)
                     {
