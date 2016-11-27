@@ -68,8 +68,7 @@ namespace BluetoothJammer
                         try
                         {
                             Status = $"Attempting to connect to {dev.DeviceName}...";
-                            Guid serviceClass;
-                            serviceClass = BluetoothService.SerialPort;
+                            var serviceClass = BluetoothService.SerialPort;
                             using (var cli = new BluetoothClient())
                             {
                                 var ep = new BluetoothEndPoint(dev.DeviceInfo.DeviceAddress, serviceClass);
