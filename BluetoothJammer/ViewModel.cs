@@ -89,7 +89,20 @@ namespace BluetoothJammer
         {
             var player = new SoundPlayer();
             player.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "silent.wav";
-            player.PlayLooping();
+            while (true)
+            {
+                player.Play();
+                Wait(300);
+                player.Stop();
+            }
+        }
+
+        private void Wait(int time)
+        {
+            Stopwatch s = new Stopwatch();
+            s.Restart();
+            while (s.ElapsedMilliseconds < time) ;
+            s.Stop();
         }
     }
 }
