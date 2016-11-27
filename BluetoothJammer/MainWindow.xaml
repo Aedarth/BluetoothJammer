@@ -43,7 +43,15 @@
         </Style>
     </Window.Resources>
     <Grid DataContext="{StaticResource VM}" Background="Black">
-        <DataGrid x:Name="Devices" Margin="0,10"
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="9*"/>
+        </Grid.RowDefinitions>
+        <Label Content="{Binding Status, 
+                Mode=TwoWay, 
+                UpdateSourceTrigger=PropertyChanged}"
+               Foreground="Green" FontSize="16"/>
+        <DataGrid x:Name="Devices" Margin="0,10" Grid.Row="1"
                   IsReadOnly="True" RowHeaderWidth="0"
                   ItemsSource="{Binding Devices}" 
                   ColumnWidth="*" Background="Black"

